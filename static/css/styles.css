@@ -143,6 +143,7 @@ button:hover {
   display: flex;
   gap: 15px;
   justify-content: space-between;
+  /*margin-bottom: 15px;*/
 }
 
 form p {
@@ -195,6 +196,10 @@ textarea:focus {
   margin: 16px 0;
 }
 
+.summary-grid.compact {
+  /*margin-top: 0;*/
+}
+
 .summary-card {
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -229,6 +234,35 @@ textarea:focus {
   font-size: 13px;
 }
 
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.chart-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  background: #f8fafc;
+}
+
+.chart-card canvas {
+  max-height: 260px;
+  margin-bottom: 12px;
+}
+
+.stats-form [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .field-label {
   display: block;
   font-weight: 600;
@@ -245,8 +279,75 @@ textarea:focus {
   gap: 12px;
 }
 
-@media (max-width: 640px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
+.category-picker,
+.category-chips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.category-picker li,
+.category-chips li {
+  margin: 0;
+}
+
+.category-card,
+.category-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-weight: 600;
+  background: #f8fafc;
+  color: var(--text);
+  user-select: none;
+}
+
+.category-card input,
+.category-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.category-card-label {
+  pointer-events: none;
+}
+
+.picker-expense .category-card:has(input:checked),
+.picker-expense .category-chip:has(input:checked) {
+  border-color: #b45309;
+  background: #fef3c7;
+  color: #78350f;
+  box-shadow: 0 0 0 3px rgb(180 83 9 / 15%);
+}
+
+.picker-income .category-card:has(input:checked),
+.picker-income .category-chip:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  box-shadow: 0 0 0 3px rgb(5 150 105 / 15%);
+}
+
+.category-card:hover,
+.category-chip:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.transaction-form .form-grid input,
+.transaction-form .form-grid select,
+.transaction-form textarea {
+  width: 100%;
 }
