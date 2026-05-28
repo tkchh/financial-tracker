@@ -12,6 +12,11 @@
     <nav class="navbar">
       <a class="brand" href="{% url 'home' %}">Finance Tracker</a>
       <div class="nav-links">
+        <a href="{% url 'expense-list' %}">Расходы</a>
+        <a href="{% url 'income-list' %}">Доходы</a>
+        <a href="{% url 'expense-category-list' %}">Категории расходов</a>
+        <a href="{% url 'income-category-list' %}">Категории доходов</a>
+        <a href="{% url 'statistics' %}">Статистика</a>
         {% if user.is_authenticated %}
           <form class="inline-form" method="post" action="{% url 'logout' %}">
             {% csrf_token %}
