@@ -19,6 +19,7 @@ from tracker.views import (
     IncomeListView,
     IncomeUpdateView,
     SignUpView,
+    StatisticsView,
     UserLoginView,
     UserLogoutView,
 )
@@ -92,4 +93,5 @@ urlpatterns = [
         IncomeDeleteView.as_view(),
         name="income-delete",
     ),
+    path("statistics/", StatisticsView.as_view(), name="statistics"),
 ]

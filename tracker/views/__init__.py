@@ -9,6 +9,7 @@ from .categories import (
     IncomeCategoryListView,
     IncomeCategoryUpdateView,
 )
+from .statistics import StatisticsView
 from .transactions import (
     ExpenseCreateView,
     ExpenseDeleteView,
@@ -41,4 +42,5 @@ __all__ = (
     "IncomeCreateView",
     "IncomeUpdateView",
     "IncomeDeleteView",
+    "StatisticsView",
 )
