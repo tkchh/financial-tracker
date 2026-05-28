@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="actions">
+  <h1>Категории расходов</h1>
+  <a class="btn" href="{% url 'expense-category-create' %}">Добавить категорию</a>
+</div>
+<ul class="item-list">
+  {% for category in object_list %}
+    <li class="item">
+      <div>
+        {{ category.name }}
+        {% if category.is_default %}<span class="badge">default</span>{% endif %}
+      </div>
+      <div class="actions">
+        <a href="{% url 'expense-category-update' category.id %}">Изменить</a>
+        <a href="{% url 'expense-category-delete' category.id %}">Удалить</a>
+      </div>
+    </li>
+  {% empty %}
+    <li class="item">Нет категорий</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="actions">
+  <h1>Расходы</h1>
+  <a class="btn" href="{% url 'expense-create' %}">Добавить расход</a>
+</div>
+
+{% if balance %}
+  <div class="summary-grid compact">
+    <div class="summary-card income">
+      <span class="summary-label">Доходы (месяц)</span>
+      <strong>{{ balance.total_income }}</strong>
+    </div>
+    <div class="summary-card expense">
+      <span class="summary-label">Расходы (месяц)</span>
+      <strong>{{ balance.total_expense }}</strong>
+    </div>
+    <div class="summary-card balance {% if balance.balance < 0 %}negative{% endif %}">
+      <span class="summary-label">Остаток</span>
+      <strong>{{ balance.balance }}</strong>
+    </div>
+  </div>
+{% endif %}
+
+<ul class="item-list">
+  {% for expense in object_list %}
+    <li class="item">
+      <div>
+        <strong>{{ expense.amount }}</strong> — {{ expense.expense_category.name }}
+        <div class="item-meta">{{ expense.spent_at }}{% if expense.comment %} | {{ expense.comment }}{% endif %}</div>
+      </div>
+      <div class="actions">
+        <a href="{% url 'expense-update' expense.id %}">Изменить</a>
+        <a href="{% url 'expense-delete' expense.id %}">Удалить</a>
+      </div>
+    </li>
+  {% empty %}
+    <li class="item">Пока нет расходов</li>
+  {% endfor %}
+</ul>
+{% endblock %}

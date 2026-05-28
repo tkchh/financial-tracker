@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Статистика</h1>
+
+<form method="get" id="statistics-form" class="stats-form">
+  <p>
+    <label for="id_period">Период</label>
+    {{ form.period }}
+  </p>
+
+  <p class="field-day" {% if period != "day" %}hidden{% endif %}>
+    <label for="id_selected_date">День</label>
+    {{ form.selected_date }}
+    {% if form.selected_date.errors %}
+      <span class="errorlist">{{ form.selected_date.errors }}</span>
+    {% endif %}
+  </p>
+
+  <p class="field-month" {% if period != "month" %}hidden{% endif %}>
+    <label for="id_selected_month">Месяц</label>
+    {{ form.selected_month }}
+    {% if form.selected_month.errors %}
+      <span class="errorlist">{{ form.selected_month.errors }}</span>
+    {% endif %}
+  </p>
+
+  <div class="field-custom" {% if period != "custom" %}hidden{% endif %}>
+    <p>
+      <label for="id_start_date">Дата начала</label>
+      {{ form.start_date }}
+    </p>
+    <p>
+      <label for="id_end_date">Дата окончания</label>
+      {{ form.end_date }}
+    </p>
+  </div>
+
+  <div class="form-section">
+    <span class="field-label">{{ form.expense_categories.label }}</span>
+    <p class="item-meta">Не выбрано — учитываются все категории</p>
+    <ul class="category-chips picker-expense">
+      {% for category in form.expense_categories.field.queryset %}
+        <li>
+          <label class="category-chip">
+            <input
+              type="checkbox"
+              name="{{ form.expense_categories.html_name }}"
+              value="{{ category.pk }}"
+              {% if category.pk|stringformat:"s" in form.expense_categories.value %}checked{% endif %}
+            >
+            <span>{{ category.name }}</span>
+          </label>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="form-section">
+    <span class="field-label">{{ form.income_categories.label }}</span>
+    <p class="item-meta">Не выбрано — учитываются все категории</p>
+    <ul class="category-chips picker-income">
+      {% for category in form.income_categories.field.queryset %}
+        <li>
+          <label class="category-chip">
+            <input
+              type="checkbox"
+              name="{{ form.income_categories.html_name }}"
+              value="{{ category.pk }}"
+              {% if category.pk|stringformat:"s" in form.income_categories.value %}checked{% endif %}
+            >
+            <span>{{ category.name }}</span>
+          </label>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% if form.non_field_errors %}
+    <ul class="errorlist">
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <button type="submit">Показать</button>
+</form>
+
+{% if balance %}
+  <section class="summary-grid">
+    <div class="summary-card income">
+      <span class="summary-label">Доходы</span>
+      <strong>{{ balance.total_income }}</strong>
+    </div>
+    <div class="summary-card expense">
+      <span class="summary-label">Расходы</span>
+      <strong>{{ balance.total_expense }}</strong>
+    </div>
+    <div class="summary-card balance {% if balance.balance < 0 %}negative{% endif %}">
+      <span class="summary-label">Остаток</span>
+      <strong>{{ balance.balance }}</strong>
+    </div>
+  </section>
+  <p class="item-meta">
+    Период: {{ balance.start_date }} — {{ balance.end_date }}
+  </p>
+{% endif %}
+
+{% if expense_stats or income_stats %}
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h2>Расходы по категориям</h2>
+      {% if expense_stats.breakdown_by_category %}
+        <canvas id="expense-chart"></canvas>
+        <p class="item-meta">Итого: {{ expense_stats.total }}</p>
+        <ul class="item-list">
+          {% for row in expense_stats.breakdown_by_category %}
+            <li class="item">
+              <span>{{ row.category_name }}</span>
+              <strong>{{ row.total }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="item-meta">Нет расходов за выбранный период</p>
+      {% endif %}
+    </div>
+
+    <div class="chart-card">
+      <h2>Доходы по категориям</h2>
+      {% if income_stats.breakdown_by_category %}
+        <canvas id="income-chart"></canvas>
+        <p class="item-meta">Итого: {{ income_stats.total }}</p>
+        <ul class="item-list">
+          {% for row in income_stats.breakdown_by_category %}
+            <li class="item">
+              <span>{{ row.category_name }}</span>
+              <strong>{{ row.total }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="item-meta">Нет доходов за выбранный период</p>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% if expense_stats and expense_stats.chart.values %}
+  {{ expense_stats.chart|json_script:"expense-chart-data" }}
+{% endif %}
+{% if income_stats and income_stats.chart.values %}
+  {{ income_stats.chart|json_script:"income-chart-data" }}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+  const periodSelect = document.getElementById("id_period");
+  const dayField = document.querySelector(".field-day");
+  const monthField = document.querySelector(".field-month");
+  const customField = document.querySelector(".field-custom");
+
+  function togglePeriodFields() {
+    const value = periodSelect.value;
+    dayField.hidden = value !== "day";
+    monthField.hidden = value !== "month";
+    customField.hidden = value !== "custom";
+  }
+
+  periodSelect.addEventListener("change", togglePeriodFields);
+  togglePeriodFields();
+
+  function renderPieChart(canvasId, dataId, label) {
+    const el = document.getElementById(dataId);
+    if (!el) return;
+    const data = JSON.parse(el.textContent);
+    if (!data.values.length) return;
+
+    new Chart(document.getElementById(canvasId), {
+      type: "pie",
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: label,
+          data: data.values,
+          backgroundColor: [
+            "#ECFEAA", "#E2DE84", "#A6A670", "#86836D",
+            "#626267", "#C5D48A", "#B8B47A", "#94906F",
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } },
+      },
+    });
+  }
+
+  renderPieChart("expense-chart", "expense-chart-data", "Расходы");
+  renderPieChart("income-chart", "income-chart-data", "Доходы");
+</script>
+{% endblock %}

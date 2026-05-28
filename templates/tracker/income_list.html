@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="actions">
+  <h1>Доходы</h1>
+  <a class="btn" href="{% url 'income-create' %}">Добавить доход</a>
+</div>
+
+{% if balance %}
+  <div class="summary-grid compact">
+    <div class="summary-card income">
+      <span class="summary-label">Доходы (месяц)</span>
+      <strong>{{ balance.total_income }}</strong>
+    </div>
+    <div class="summary-card expense">
+      <span class="summary-label">Расходы (месяц)</span>
+      <strong>{{ balance.total_expense }}</strong>
+    </div>
+    <div class="summary-card balance {% if balance.balance < 0 %}negative{% endif %}">
+      <span class="summary-label">Остаток</span>
+      <strong>{{ balance.balance }}</strong>
+    </div>
+  </div>
+{% endif %}
+
+<ul class="item-list">
+  {% for income in object_list %}
+    <li class="item">
+      <div>
+        <strong>{{ income.amount }}</strong> — {{ income.income_category.name }}
+        <div class="item-meta">
+          {{ income.received_at }}{% if income.comment %} | {{ income.comment }}{% endif %}
+        </div>
+      </div>
+      <div class="actions">
+        <a href="{% url 'income-update' income.id %}">Изменить</a>
+        <a href="{% url 'income-delete' income.id %}">Удалить</a>
+      </div>
+    </li>
+  {% empty %}
+    <li class="item">Пока нет доходов</li>
+  {% endfor %}
+</ul>
+{% endblock %}

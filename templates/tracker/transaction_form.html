@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ page_title }}</h1>
+<form method="post" class="transaction-form">
+  {% csrf_token %}
+
+  <div class="form-section">
+    {% if form.expense_category %}
+      {% with category_field=form.expense_category %}
+        <span class="field-label">{{ category_field.label }}</span>
+        <ul class="category-picker picker-{{ picker_variant }}">
+          {% for category in category_field.field.queryset %}
+            <li>
+              <label class="category-card">
+                <input
+                  type="radio"
+                  name="{{ category_field.html_name }}"
+                  value="{{ category.pk }}"
+                  {% if category_field.value|stringformat:"s" == category.pk|stringformat:"s" %}checked{% endif %}
+                >
+                <span class="category-card-label">{{ category.name }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if category_field.errors %}
+          <ul class="errorlist">
+            {% for error in category_field.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    {% else %}
+      {% with category_field=form.income_category %}
+        <span class="field-label">{{ category_field.label }}</span>
+        <ul class="category-picker picker-{{ picker_variant }}">
+          {% for category in category_field.field.queryset %}
+            <li>
+              <label class="category-card">
+                <input
+                  type="radio"
+                  name="{{ category_field.html_name }}"
+                  value="{{ category.pk }}"
+                  {% if category_field.value|stringformat:"s" == category.pk|stringformat:"s" %}checked{% endif %}
+                >
+                <span class="category-card-label">{{ category.name }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if category_field.errors %}
+          <ul class="errorlist">
+            {% for error in category_field.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
+  </div>
+
+  <div class="form-grid">
+    <p>
+      <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+      {{ form.amount }}
+    </p>
+    <p>
+      {% if form.spent_at %}
+        <label for="{{ form.spent_at.id_for_label }}">{{ form.spent_at.label }}</label>
+        {{ form.spent_at }}
+      {% else %}
+        <label for="{{ form.received_at.id_for_label }}">{{ form.received_at.label }}</label>
+        {{ form.received_at }}
+      {% endif %}
+    </p>
+  </div>
+
+  <p>
+    <label for="{{ form.comment.id_for_label }}">{{ form.comment.label }}</label>
+    {{ form.comment }}
+  </p>
+
+  <div class="actions">
+    <button type="submit">Сохранить</button>
+    <a class="link-btn" href="javascript:history.back()">Назад</a>
+  </div>
+</form>
+{% endblock %}
