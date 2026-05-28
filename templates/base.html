@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finance Tracker</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <div class="page">
+    <nav class="navbar">
+      <a class="brand" href="{% url 'home' %}">Finance Tracker</a>
+      <div class="nav-links">
+        {% if user.is_authenticated %}
+          <form class="inline-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-secondary">Выход</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}">Вход</a>
+          <a href="{% url 'signup' %}">Регистрация</a>
+        {% endif %}
+      </div>
+    </nav>
+
+    <main class="card">
+      {% if messages %}
+        <ul class="item-list">
+          {% for message in messages %}
+            <li class="item">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>
