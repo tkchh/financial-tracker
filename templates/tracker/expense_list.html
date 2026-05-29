@@ -9,15 +9,15 @@
   <div class="summary-grid compact">
     <div class="summary-card income">
       <span class="summary-label">Доходы (месяц)</span>
-      <strong>{{ balance.total_income }}</strong>
+      <strong>{{ balance.total_income|floatformat:"2" }}</strong>
     </div>
     <div class="summary-card expense">
       <span class="summary-label">Расходы (месяц)</span>
-      <strong>{{ balance.total_expense }}</strong>
+      <strong>{{ balance.total_expense|floatformat:"2" }}</strong>
     </div>
     <div class="summary-card balance {% if balance.balance < 0 %}negative{% endif %}">
       <span class="summary-label">Остаток</span>
-      <strong>{{ balance.balance }}</strong>
+      <strong>{{ balance.balance|floatformat:"2" }}</strong>
     </div>
   </div>
 {% endif %}

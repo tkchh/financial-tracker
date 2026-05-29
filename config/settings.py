@@ -76,6 +76,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+#production default
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
@@ -87,6 +88,7 @@ DATABASES = {
     }
 }
 
+#dev
 if os.getenv("USE_SQLITE", "0") == "1":
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
@@ -115,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 

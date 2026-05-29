@@ -90,15 +90,15 @@
   <section class="summary-grid">
     <div class="summary-card income">
       <span class="summary-label">Доходы</span>
-      <strong>{{ balance.total_income }}</strong>
+      <strong>{{ balance.total_income|floatformat:"2" }}</strong>
     </div>
     <div class="summary-card expense">
       <span class="summary-label">Расходы</span>
-      <strong>{{ balance.total_expense }}</strong>
+      <strong>{{ balance.total_expense|floatformat:"2" }}</strong>
     </div>
     <div class="summary-card balance {% if balance.balance < 0 %}negative{% endif %}">
       <span class="summary-label">Остаток</span>
-      <strong>{{ balance.balance }}</strong>
+      <strong>{{ balance.balance|floatformat:"2" }}</strong>
     </div>
   </section>
   <p class="item-meta">
@@ -112,7 +112,7 @@
       <h2>Расходы по категориям</h2>
       {% if expense_stats.breakdown_by_category %}
         <canvas id="expense-chart"></canvas>
-        <p class="item-meta">Итого: {{ expense_stats.total }}</p>
+        <p class="item-meta">Итого: {{ expense_stats.total|floatformat:"2" }}</p>
         <ul class="item-list">
           {% for row in expense_stats.breakdown_by_category %}
             <li class="item">
@@ -130,12 +130,12 @@
       <h2>Доходы по категориям</h2>
       {% if income_stats.breakdown_by_category %}
         <canvas id="income-chart"></canvas>
-        <p class="item-meta">Итого: {{ income_stats.total }}</p>
+        <p class="item-meta">Итого: {{ income_stats.total|floatformat:"2" }}</p>
         <ul class="item-list">
           {% for row in income_stats.breakdown_by_category %}
             <li class="item">
               <span>{{ row.category_name }}</span>
-              <strong>{{ row.total }}</strong>
+              <strong>{{ row.total|floatformat:"2" }}</strong>
             </li>
           {% endfor %}
         </ul>

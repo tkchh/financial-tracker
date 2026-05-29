@@ -71,6 +71,16 @@ export DB_PORT=5432
 
 ### 4. Миграции и запуск
 
+#### Воспроизвести SQL-схему без Django-миграций:
+```bash
+# SQLite
+sqlite3 new_db.sqlite3 < db_schema.sql 
+
+# PostgreSQL
+psql -h localhost -U postgres -d finance_db < db_schema.sql
+```
+
+#### С Django-миграциями:
 ```bash
 python manage.py migrate
 pytohn manage.py createsuperuser #создать super-пользователя
@@ -116,6 +126,7 @@ financial-tracker/
 ├── static/css/             # CSS-стили
 ├── requirements.txt        # Зависимости
 └── manage.py
+└── db_schema.sql           # Логическая резервная копия схемы базы данных
 ```
 
 
